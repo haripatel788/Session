@@ -1,23 +1,19 @@
 # Student Productivity & Analytics Platform
 
-A full-stack web application designed to help students track, analyze, and improve their study habits over time.
+A full-stack web application designed to help user (students) track, analyze, and improve their study habits over time.
 
-## 🚀 Features
-- User authentication (coming soon)
+## Features
+- User authentication
 - Study session tracking by subject and time
-- Analytics dashboard to visualize productivity trends
+- Analytics dashboard to show productivity trends
 - Secure data storage with a relational database
 
-## 🛠 Tech Stack
+## Tech Stack
 - Frontend: Next.js, TypeScript, Tailwind CSS
 - Backend: Next.js API Routes (Serverless)
-- Database: PostgreSQL (planned)
+- Database: PostgreSQL
 - Deployment: Vercel
 
-## 📌 Status
-Currently in active development.
+## Status
+Working on it currently.
 
-## 📂 Getting Started
-```bash
-npm install
-npm run dev
