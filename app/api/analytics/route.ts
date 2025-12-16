@@ -1,17 +1,52 @@
 import { prisma } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
-export async function GET(request: Request) {
+// Helper function to ensure user exists in database
+async function ensureUserExists(userId: string) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get("userId");
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      const clerkUser = await currentUser();
+      const email = clerkUser?.emailAddresses[0]?.emailAddress;
+
+      if (!email) {
+        throw new Error("No email found for user");
+      }
+
+      await prisma.user.create({
+        data: {
+          id: userId,
+          email: email,
+        },
+      });
+
+      console.log(`✅ Auto-created user in database: ${email}`);
+    }
+  } catch (error) {
+    console.error("Error ensuring user exists:", error);
+    if (error instanceof Error && !error.message.includes("Unique constraint")) {
+      throw error;
+    }
+  }
+}
+
+export async function GET() {
+  try {
+    const { userId } = await auth();
 
     if (!userId) {
       return NextResponse.json(
-        { error: "userId is required" },
-        { status: 400 }
+        { error: "Unauthorized" },
+        { status: 401 }
       );
     }
+
+    // Ensure user exists in database
+    await ensureUserExists(userId);
 
     const sessions = await prisma.studySession.findMany({
       where: { userId },

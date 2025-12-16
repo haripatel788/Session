@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import StatCard from "@/app/components/StatCard";
-import { getCurrentUserId } from "@/app/lib/currentUser";
 
 type Session = {
   id: string;
@@ -22,23 +22,22 @@ type Analytics = {
 };
 
 export default function DashboardPage() {
+  const { userId, isLoaded } = useAuth();
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const userId = getCurrentUserId();
-
-        if (!userId) {
-          setLoading(false);
-          return;
-        }
-
         const [analyticsRes, sessionsRes] = await Promise.all([
-          fetch(`/api/analytics?userId=${userId}`),
-          fetch(`/api/study-sessions?userId=${userId}`),
+          fetch("/api/analytics"),
+          fetch("/api/study-sessions"),
         ]);
 
         const analyticsData = await analyticsRes.json();
@@ -55,14 +54,20 @@ export default function DashboardPage() {
       }
     }
 
-    loadData();
-  }, []);
+    if (isLoaded) {
+      loadData();
+    }
+  }, [userId, isLoaded]);
 
-  if (loading) {
+  if (!isLoaded || loading) {
     return (
-      <p className="text-sm text-gray-400 animate-pulse">
-        Loading…
-      </p>
+      <p className="text-sm text-gray-400 animate-pulse">Loading…</p>
+    );
+  }
+
+  if (!userId) {
+    return (
+      <p className="text-sm text-gray-400">Please sign in to view your dashboard.</p>
     );
   }
 
@@ -103,9 +108,7 @@ export default function DashboardPage() {
         <p className="mt-2 text-xl font-medium">
           {sessionCount} sessions logged
         </p>
-        <p className="mt-1 text-sm text-gray-500">
-          Keep the streak going.
-        </p>
+        <p className="mt-1 text-sm text-gray-500">Keep the streak going.</p>
       </div>
 
       {/* Recent sessions */}
@@ -118,7 +121,7 @@ export default function DashboardPage() {
           {sessionCount === 0 && (
             <div className="px-6 py-10 text-center">
               <p className="text-sm text-gray-400">
-                You haven’t logged any sessions yet.
+                You haven&#39;t logged any sessions yet.
               </p>
               <p className="mt-1 text-xs text-gray-500">
                 Start by adding your first study session.
@@ -132,9 +135,7 @@ export default function DashboardPage() {
               className="flex items-center justify-between px-6 py-4 hover:bg-white/10 hover:-translate-y-[1px] transition-all duration-200"
             >
               <div>
-                <p className="text-sm font-medium">
-                  {session.subject.name}
-                </p>
+                <p className="text-sm font-medium">{session.subject.name}</p>
                 <p className="text-xs text-gray-400">
                   {new Date(session.createdAt).toLocaleDateString()}
                 </p>

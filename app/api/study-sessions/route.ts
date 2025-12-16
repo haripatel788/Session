@@ -1,7 +1,42 @@
 import { prisma } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
+// Helper function to ensure user exists in database
+async function ensureUserExists(userId: string) {
+  try {
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      // Get user email from Clerk
+      const clerkUser = await currentUser();
+      const email = clerkUser?.emailAddresses[0]?.emailAddress;
+
+      if (!email) {
+        throw new Error("No email found for user");
+      }
+
+      // Create user in database
+      await prisma.user.create({
+        data: {
+          id: userId,
+          email: email,
+        },
+      });
+
+      console.log(`✅ Auto-created user in database: ${email}`);
+    }
+  } catch (error) {
+    console.error("Error ensuring user exists:", error);
+    // If it's just a unique constraint error, user already exists - that's fine
+    if (error instanceof Error && !error.message.includes("Unique constraint")) {
+      throw error;
+    }
+  }
+}
 
 export async function POST(request: Request) {
   try {
@@ -10,6 +45,9 @@ export async function POST(request: Request) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Ensure user exists in database
+    await ensureUserExists(userId);
 
     const body = await request.json();
     const { subjectName, duration, difficulty, notes } = body;
@@ -60,7 +98,6 @@ export async function POST(request: Request) {
   }
 }
 
-
 export async function GET() {
   try {
     const { userId } = await auth();
@@ -68,6 +105,9 @@ export async function GET() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Ensure user exists in database
+    await ensureUserExists(userId);
 
     const sessions = await prisma.studySession.findMany({
       where: { userId },
@@ -84,4 +124,3 @@ export async function GET() {
     );
   }
 }
-

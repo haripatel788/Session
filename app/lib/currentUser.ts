@@ -1,3 +1,11 @@
-export function getCurrentUserId() {
-	return "253e4980-1b12-41de-8d0e-0f90f84ae8f8";
+import { auth } from "@clerk/nextjs/server";
+
+export async function getCurrentUserId() {
+  const { userId } = await auth();
+  
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+  
+  return userId;
 }

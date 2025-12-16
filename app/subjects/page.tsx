@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getCurrentUserId } from "@/app/lib/currentUser";
+import { useAuth } from "@clerk/nextjs";
 
 type SubjectSummary = {
   name: string;
@@ -11,55 +11,69 @@ type SubjectSummary = {
 };
 
 export default function SubjectsPage() {
+  const { userId, isLoaded } = useAuth();
   const [subjects, setSubjects] = useState<SubjectSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadSubjects() {
-      const userId = getCurrentUserId();
-
-      const res = await fetch(`/api/study-sessions?userId=${userId}`);
-      const data = await res.json();
-
-      // Aggregate sessions by subject
-      const map: Record<string, SubjectSummary> = {};
-
-      for (const session of data.sessions) {
-        const name = session.subject.name;
-
-        if (!map[name]) {
-          map[name] = {
-            name,
-            totalMinutes: 0,
-            sessionCount: 0,
-            avgDifficulty: 0,
-          };
-        }
-
-        map[name].totalMinutes += session.duration;
-        map[name].sessionCount += 1;
-        map[name].avgDifficulty += session.difficulty;
+      if (!userId) {
+        setLoading(false);
+        return;
       }
 
-      const summaries = Object.values(map).map((s) => ({
-        ...s,
-        avgDifficulty: Number(
-          (s.avgDifficulty / s.sessionCount).toFixed(1)
-        ),
-      }));
+      try {
+        const res = await fetch("/api/study-sessions");
+        const data = await res.json();
 
-      setSubjects(summaries);
-      setLoading(false);
+        // Aggregate sessions by subject
+        const map: Record<string, SubjectSummary> = {};
+
+        for (const session of data.sessions) {
+          const name = session.subject.name;
+
+          if (!map[name]) {
+            map[name] = {
+              name,
+              totalMinutes: 0,
+              sessionCount: 0,
+              avgDifficulty: 0,
+            };
+          }
+
+          map[name].totalMinutes += session.duration;
+          map[name].sessionCount += 1;
+          map[name].avgDifficulty += session.difficulty;
+        }
+
+        const summaries = Object.values(map).map((s) => ({
+          ...s,
+          avgDifficulty: Number((s.avgDifficulty / s.sessionCount).toFixed(1)),
+        }));
+
+        setSubjects(summaries);
+      } catch (error) {
+        console.error("Failed to load subjects:", error);
+      } finally {
+        setLoading(false);
+      }
     }
 
-    loadSubjects();
-  }, []);
+    if (isLoaded) {
+      loadSubjects();
+    }
+  }, [userId, isLoaded]);
 
-  if (loading) {
-    return <p className="text-sm text-gray-400 animate-pulse">
-    Loading…
-  </p>
-  ;
+  if (!isLoaded || loading) {
+    return (
+      <p className="text-sm text-gray-400 animate-pulse">Loading…</p>
+    );
+  }
+
+  if (!userId) {
+    return (
+      <p className="text-sm text-gray-400">Please sign in to view subjects.</p>
+    );
   }
 
   return (
@@ -75,28 +89,21 @@ export default function SubjectsPage() {
       {/* Subject Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {subjects.length === 0 && (
-          <p className="text-sm text-gray-400">
-            No subjects yet.
-          </p>
+          <p className="text-sm text-gray-400">No subjects yet.</p>
         )}
 
         {subjects.map((subject) => (
           <div
             key={subject.name}
-            className="rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10 hover:-translate-y-[1px] transition-all duration-200
- transition"
+            className="rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10 hover:-translate-y-[1px] transition-all duration-200"
           >
-            
             <h2 className="text-lg font-medium">{subject.name}</h2>
 
-<p className="mt-2 text-2xl font-semibold">
-  {subject.totalMinutes} min
-</p>
+            <p className="mt-2 text-2xl font-semibold">
+              {subject.totalMinutes} min
+            </p>
 
-<p className="mt-1 text-xs text-gray-500">
-  Total study time
-</p>
-
+            <p className="mt-1 text-xs text-gray-500">Total study time</p>
 
             <div className="mt-4 space-y-2 text-sm text-gray-300">
               <p>
