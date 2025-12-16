@@ -32,8 +32,9 @@ export async function GET(request: Request) {
     const perSubject: Record<string, number> = {};
 
     for (const s of sessions) {
-      const name = s.subject.name;
-      perSubject[name] = (perSubject[name] || 0) + s.duration;
+      const subjectName = s.subject.name;
+      perSubject[subjectName] =
+        (perSubject[subjectName] || 0) + s.duration;
     }
 
     return NextResponse.json({
