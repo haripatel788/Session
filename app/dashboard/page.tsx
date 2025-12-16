@@ -28,34 +28,49 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function loadData() {
-      const userId = getCurrentUserId();
+      try {
+        const userId = getCurrentUserId();
 
-      const [analyticsRes, sessionsRes] = await Promise.all([
-        fetch(`/api/analytics?userId=${userId}`),
-        fetch(`/api/study-sessions?userId=${userId}`),
-      ]);
+        if (!userId) {
+          setLoading(false);
+          return;
+        }
 
-      const analyticsData = await analyticsRes.json();
-      const sessionsData = await sessionsRes.json();
+        const [analyticsRes, sessionsRes] = await Promise.all([
+          fetch(`/api/analytics?userId=${userId}`),
+          fetch(`/api/study-sessions?userId=${userId}`),
+        ]);
 
-      setAnalytics(analyticsData);
-      setSessions(sessionsData.sessions);
-      setLoading(false);
+        const analyticsData = await analyticsRes.json();
+        const sessionsData = await sessionsRes.json();
+
+        setAnalytics(analyticsData ?? null);
+        setSessions(sessionsData?.sessions ?? []);
+      } catch (err) {
+        console.error("Dashboard load error:", err);
+        setAnalytics(null);
+        setSessions([]);
+      } finally {
+        setLoading(false);
+      }
     }
 
     loadData();
   }, []);
 
   if (loading) {
-    return <p className="text-sm text-gray-400 animate-pulse">
-    Loading…
-  </p>
-  ;
+    return (
+      <p className="text-sm text-gray-400 animate-pulse">
+        Loading…
+      </p>
+    );
   }
+
+  const sessionCount = sessions.length;
 
   return (
     <section className="space-y-10">
-      {}
+      {/* Header */}
       <div>
         <h1 className="text-3xl font-semibold">Dashboard</h1>
         <p className="mt-1 text-sm text-gray-400">
@@ -63,11 +78,11 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {}
+      {/* Stats */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
         <StatCard
           label="Total Study Time"
-          value={`${analytics?.totalMinutes} min`}
+          value={`${analytics?.totalMinutes ?? 0} min`}
           subtext="All time"
         />
         <StatCard
@@ -77,46 +92,44 @@ export default function DashboardPage() {
         />
         <StatCard
           label="Subjects Studied"
-          value={Object.keys(analytics?.perSubject || {}).length}
+          value={Object.keys(analytics?.perSubject ?? {}).length}
           subtext="Unique subjects"
         />
       </div>
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-  <p className="text-sm text-gray-400">This Week</p>
-  <p className="mt-2 text-xl font-medium">
-    {sessions.length} sessions logged
-  </p>
-  <p className="mt-1 text-sm text-gray-500">
-    Keep the streak going.
-  </p>
-</div>
 
-      {}
+      {/* This week */}
+      <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+        <p className="text-sm text-gray-400">This Week</p>
+        <p className="mt-2 text-xl font-medium">
+          {sessionCount} sessions logged
+        </p>
+        <p className="mt-1 text-sm text-gray-500">
+          Keep the streak going.
+        </p>
+      </div>
+
+      {/* Recent sessions */}
       <div className="rounded-2xl border border-white/10 bg-white/5">
         <div className="border-b border-white/10 px-6 py-4">
           <h2 className="text-lg font-medium">Recent Sessions</h2>
         </div>
 
         <div className="divide-y divide-white/10">
-          {sessions.length === 0 && (
-            <p className="px-6 py-6 text-sm text-gray-400">
-              <div className="px-6 py-10 text-center">
-  <p className="text-sm text-gray-400">
-    You haven’t logged any sessions yet.
-  </p>
-  <p className="mt-1 text-xs text-gray-500">
-    Start by adding your first study session.
-  </p>
-</div>
-
-            </p>
+          {sessionCount === 0 && (
+            <div className="px-6 py-10 text-center">
+              <p className="text-sm text-gray-400">
+                You haven’t logged any sessions yet.
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                Start by adding your first study session.
+              </p>
+            </div>
           )}
 
           {sessions.slice(0, 5).map((session) => (
             <div
               key={session.id}
-              className="flex items-center justify-between px-6 py-4 hover:bg-white/10 hover:-translate-y-[1px] transition-all duration-200
- transition"
+              className="flex items-center justify-between px-6 py-4 hover:bg-white/10 hover:-translate-y-[1px] transition-all duration-200"
             >
               <div>
                 <p className="text-sm font-medium">

@@ -1,21 +1,26 @@
 import { prisma } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { userId, subjectName, duration, difficulty, notes } = body;
+    const { userId } = await auth();
 
-    // Basic validation
-    if (!userId || !subjectName || !duration || !difficulty) {
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { subjectName, duration, difficulty, notes } = body;
+
+    if (!subjectName || !duration || !difficulty) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    // 1. Find existing subject for this user
     let subject = await prisma.subject.findFirst({
       where: {
         userId,
@@ -23,7 +28,6 @@ export async function POST(request: Request) {
       },
     });
 
-    // 2. Create subject if it doesn't exist
     if (!subject) {
       subject = await prisma.subject.create({
         data: {
@@ -33,7 +37,6 @@ export async function POST(request: Request) {
       });
     }
 
-    // 3. Create the study session
     const session = await prisma.studySession.create({
       data: {
         userId,
@@ -42,12 +45,14 @@ export async function POST(request: Request) {
         difficulty,
         notes,
       },
+      include: {
+        subject: true,
+      },
     });
 
     return NextResponse.json(session, { status: 201 });
   } catch (error) {
     console.error("CREATE STUDY SESSION ERROR:", error);
-
     return NextResponse.json(
       { error: "Failed to create study session" },
       { status: 500 }
@@ -55,13 +60,13 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET(request: Request) {
+
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get("userId");
+    const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json({ error: "userId is required" }, { status: 400 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const sessions = await prisma.studySession.findMany({
@@ -79,3 +84,4 @@ export async function GET(request: Request) {
     );
   }
 }
+
