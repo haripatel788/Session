@@ -1,6 +1,7 @@
 import { prisma } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -49,6 +50,31 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { error: "Failed to create study session" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId");
+
+    if (!userId) {
+      return NextResponse.json({ error: "userId is required" }, { status: 400 });
+    }
+
+    const sessions = await prisma.studySession.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      include: { subject: true },
+    });
+
+    return NextResponse.json({ sessions });
+  } catch (error) {
+    console.error("GET STUDY SESSIONS ERROR:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch study sessions" },
       { status: 500 }
     );
   }
