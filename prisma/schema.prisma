@@ -23,7 +23,10 @@ model Subject {
 
   user          User           @relation(fields: [userId], references: [id])
   studySessions StudySession[]
+
+  @@unique([userId, name])
 }
+
 
 model StudySession {
   id         String   @id @default(uuid())
