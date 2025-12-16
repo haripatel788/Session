@@ -47,12 +47,15 @@ export default function DashboardPage() {
   }, []);
 
   if (loading) {
-    return <p className="text-gray-400">Loading dashboard…</p>;
+    return <p className="text-sm text-gray-400 animate-pulse">
+    Loading…
+  </p>
+  ;
   }
 
   return (
     <section className="space-y-10">
-      {/* Page Header */}
+      {}
       <div>
         <h1 className="text-3xl font-semibold">Dashboard</h1>
         <p className="mt-1 text-sm text-gray-400">
@@ -60,7 +63,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* KPI Cards */}
+      {}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
         <StatCard
           label="Total Study Time"
@@ -78,8 +81,17 @@ export default function DashboardPage() {
           subtext="Unique subjects"
         />
       </div>
+      <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+  <p className="text-sm text-gray-400">This Week</p>
+  <p className="mt-2 text-xl font-medium">
+    {sessions.length} sessions logged
+  </p>
+  <p className="mt-1 text-sm text-gray-500">
+    Keep the streak going.
+  </p>
+</div>
 
-      {/* Recent Sessions */}
+      {}
       <div className="rounded-2xl border border-white/10 bg-white/5">
         <div className="border-b border-white/10 px-6 py-4">
           <h2 className="text-lg font-medium">Recent Sessions</h2>
@@ -88,14 +100,23 @@ export default function DashboardPage() {
         <div className="divide-y divide-white/10">
           {sessions.length === 0 && (
             <p className="px-6 py-6 text-sm text-gray-400">
-              No study sessions logged yet.
+              <div className="px-6 py-10 text-center">
+  <p className="text-sm text-gray-400">
+    You haven’t logged any sessions yet.
+  </p>
+  <p className="mt-1 text-xs text-gray-500">
+    Start by adding your first study session.
+  </p>
+</div>
+
             </p>
           )}
 
           {sessions.slice(0, 5).map((session) => (
             <div
               key={session.id}
-              className="flex items-center justify-between px-6 py-4 hover:bg-white/5 transition"
+              className="flex items-center justify-between px-6 py-4 hover:bg-white/10 hover:-translate-y-[1px] transition-all duration-200
+ transition"
             >
               <div>
                 <p className="text-sm font-medium">

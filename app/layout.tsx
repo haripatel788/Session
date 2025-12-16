@@ -69,6 +69,12 @@ export default function RootLayout({
     <main className="mx-auto max-w-6xl px-6 py-10">
       {children}
     </main>
+    <footer className="border-t border-white/10 py-6 text-center text-xs text-gray-500">
+  © {new Date().getFullYear()} Session — Focus. Measure. Improve.
+  <p>Created by  <a href="https://haripatel.github.io">Hari Patel</a></p>
+ 
+</footer>
+
   </div>
 </body>
 

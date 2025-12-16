@@ -31,7 +31,10 @@ export default function SessionsPage() {
   }, []);
 
   if (loading) {
-    return <p className="text-gray-400">Loading sessions…</p>;
+    return <p className="text-sm text-gray-400 animate-pulse">
+    Loading…
+  </p>
+  ;
   }
 
   return (
@@ -45,14 +48,16 @@ export default function SessionsPage() {
           </p>
         </div>
 
-        <button className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white hover:bg-white/10 transition">
+        <button className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white hover:bg-white/10 hover:-translate-y-[1px] transition-all duration-200
+ transition">
           Add Session
         </button>
       </div>
 
       {/* Sessions Table */}
       <div className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
-        <div className="grid grid-cols-5 gap-4 border-b border-white/10 px-6 py-3 text-xs uppercase tracking-wide text-gray-400">
+        <div className="grid grid-cols-5 gap-4 px-6 py-4 border-t border-white/5 hover:bg-white/5 transition"
+        >
           <span>Subject</span>
           <span>Date</span>
           <span>Duration</span>
@@ -69,7 +74,8 @@ export default function SessionsPage() {
         {sessions.map((session) => (
           <div
             key={session.id}
-            className="grid grid-cols-5 gap-4 px-6 py-4 text-sm hover:bg-white/5 transition"
+            className="grid grid-cols-5 gap-4 px-6 py-4 border-t border-white/5 hover:bg-white/5 transition"
+
           >
             <span className="font-medium">
               {session.subject.name}

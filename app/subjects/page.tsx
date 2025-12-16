@@ -56,7 +56,10 @@ export default function SubjectsPage() {
   }, []);
 
   if (loading) {
-    return <p className="text-gray-400">Loading subjects…</p>;
+    return <p className="text-sm text-gray-400 animate-pulse">
+    Loading…
+  </p>
+  ;
   }
 
   return (
@@ -80,17 +83,22 @@ export default function SubjectsPage() {
         {subjects.map((subject) => (
           <div
             key={subject.name}
-            className="rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10 transition"
+            className="rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10 hover:-translate-y-[1px] transition-all duration-200
+ transition"
           >
-            <h2 className="text-lg font-medium">
-              {subject.name}
-            </h2>
+            
+            <h2 className="text-lg font-medium">{subject.name}</h2>
+
+<p className="mt-2 text-2xl font-semibold">
+  {subject.totalMinutes} min
+</p>
+
+<p className="mt-1 text-xs text-gray-500">
+  Total study time
+</p>
+
 
             <div className="mt-4 space-y-2 text-sm text-gray-300">
-              <p>
-                <span className="text-gray-400">Total time:</span>{" "}
-                {subject.totalMinutes} min
-              </p>
               <p>
                 <span className="text-gray-400">Sessions:</span>{" "}
                 {subject.sessionCount}
