@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -13,7 +13,8 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = params;
+    // Await params before destructuring
+    const { id } = await params;
 
     // Verify the session belongs to the user
     const session = await prisma.studySession.findUnique({
@@ -49,11 +50,9 @@ export async function DELETE(
   }
 }
 
-
-
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -62,7 +61,8 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = params;
+    // Await params before destructuring
+    const { id } = await params;
     const body = await request.json();
     const { subjectName, duration, difficulty, notes } = body;
 

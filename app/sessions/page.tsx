@@ -27,12 +27,10 @@ export default function SessionsPage() {
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Check URL parameter to auto-open form
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('open') === 'true') {
       setShowForm(true);
-      // Remove the parameter from URL
       window.history.replaceState({}, '', '/sessions');
     }
   }, []);
@@ -40,14 +38,11 @@ export default function SessionsPage() {
   useEffect(() => {
     async function loadSessions() {
       if (!userId) return;
-      
+
       try {
         const res = await fetch("/api/study-sessions");
-        if (!res.ok) {
-          throw new Error(`Failed to fetch sessions: ${res.statusText}`);
-        }
-        const data: { sessions: Session[] } = await res.json();
-        setSessions(data.sessions ?? []);
+        const data = await res.json();
+        setSessions(data?.sessions ?? []);
       } catch (error) {
         console.error("Failed to load sessions:", error);
       } finally {
@@ -71,7 +66,7 @@ export default function SessionsPage() {
       });
 
       if (!res.ok) {
-        throw new Error(`Failed to delete session: ${res.statusText}`);
+        throw new Error("Failed to delete session");
       }
 
       setSessions((prev) => prev.filter((s) => s.id !== sessionId));
@@ -98,7 +93,6 @@ export default function SessionsPage() {
       const url = editingSession
         ? `/api/study-sessions/${editingSession.id}`
         : "/api/study-sessions";
-      
       const method = editingSession ? "PATCH" : "POST";
 
       const res = await fetch(url, {
@@ -113,10 +107,10 @@ export default function SessionsPage() {
       });
 
       if (!res.ok) {
-        throw new Error(`Failed to save session: ${res.statusText}`);
+        throw new Error("Failed to save session");
       }
 
-      const savedSession: Session = await res.json();
+      const savedSession = await res.json();
 
       if (editingSession) {
         setSessions((prev) =>
@@ -151,30 +145,33 @@ export default function SessionsPage() {
 
   if (!isLoaded || loading) {
     return (
-      <p className="text-sm text-gray-400 animate-pulse">Loading…</p>
+      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
+        <p className="text-sm text-gray-600 dark:text-gray-400 animate-pulse">Loading…</p>
+      </div>
     );
   }
 
   if (!userId) {
     return (
-      <p className="text-sm text-gray-400">Please sign in to view sessions.</p>
+      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
+        <p className="text-sm text-gray-600 dark:text-gray-400">Please sign in to view sessions.</p>
+      </div>
     );
   }
 
   return (
-    <section className="space-y-8">
+    <section className="space-y-8 min-h-[calc(100vh-200px)]">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold">Sessions</h1>
-          <p className="mt-1 text-sm text-gray-400">
+          <h1 className="text-4xl font-semibold text-black dark:text-white tracking-tight">Sessions</h1>
+          <p className="mt-2 text-base text-gray-600 dark:text-gray-400">
             All your recorded study sessions.
           </p>
         </div>
-
         <button
           type="button"
           onClick={() => setShowForm((prev) => !prev)}
-          className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white hover:bg-white/10 hover:-translate-y-[1px] transition-all duration-200"
+          className="rounded-xl border border-gray-300 dark:border-white/10 bg-gray-100 dark:bg-white/5 px-4 py-2.5 text-sm text-black dark:text-white hover:bg-gray-200 dark:hover:bg-white/10 hover:-translate-y-[1px] transition-all duration-200 font-semibold"
         >
           {showForm ? "Cancel" : "Add Session"}
         </button>
@@ -183,21 +180,20 @@ export default function SessionsPage() {
       {showForm && (
         <form
           onSubmit={handleSubmit}
-          className="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-4"
+          className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 space-y-4"
         >
-          <h3 className="text-lg font-medium">
+          <h3 className="text-lg font-semibold text-black dark:text-white">
             {editingSession ? "Edit Session" : "New Session"}
           </h3>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             <input
               required
               placeholder="Subject"
               value={subjectName}
               onChange={(e) => setSubjectName(e.target.value)}
-              className="rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-sm"
+              className="rounded-lg bg-white dark:bg-black/30 border border-gray-300 dark:border-white/10 px-3 py-2 text-sm text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             />
-
             <input
               required
               type="number"
@@ -205,26 +201,24 @@ export default function SessionsPage() {
               placeholder="Duration (min)"
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
-              className="rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-sm"
+              className="rounded-lg bg-white dark:bg-black/30 border border-gray-300 dark:border-white/10 px-3 py-2 text-sm text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             />
-
             <select
               value={difficulty}
               onChange={(e) => setDifficulty(Number(e.target.value))}
-              className="rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-sm"
+              className="rounded-lg bg-white dark:bg-black/30 border border-gray-300 dark:border-white/10 px-3 py-2 text-sm text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             >
               {[1, 2, 3, 4, 5].map((d) => (
-                <option key={d} value={d}>
+                <option key={d} value={d} className="bg-white dark:bg-black text-black dark:text-white">
                   Difficulty {d}
                 </option>
               ))}
             </select>
-
             <input
               placeholder="Notes (optional)"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-sm"
+              className="rounded-lg bg-white dark:bg-black/30 border border-gray-300 dark:border-white/10 px-3 py-2 text-sm text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             />
           </div>
 
@@ -232,16 +226,15 @@ export default function SessionsPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg bg-white/10 px-4 py-2 text-sm hover:bg-white/20 disabled:opacity-50"
+              className="rounded-lg bg-black dark:bg-white text-white dark:text-black px-4 py-2 text-sm hover:bg-gray-800 dark:hover:bg-gray-100 disabled:opacity-50 font-semibold transition"
             >
               {submitting ? "Saving…" : editingSession ? "Update Session" : "Save Session"}
             </button>
-            
             {editingSession && (
               <button
                 type="button"
                 onClick={handleCancel}
-                className="rounded-lg border border-white/10 px-4 py-2 text-sm hover:bg-white/5"
+                className="rounded-lg border border-gray-300 dark:border-white/10 px-4 py-2 text-sm text-black dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 font-semibold transition"
               >
                 Cancel
               </button>
@@ -250,9 +243,8 @@ export default function SessionsPage() {
         </form>
       )}
 
-      {/* Sessions Table */}
-      <div className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
-        <div className="grid grid-cols-6 gap-4 px-6 py-4 text-sm font-medium border-b border-white/10">
+      <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 overflow-hidden">
+        <div className="grid grid-cols-6 gap-4 px-6 py-4 text-sm font-semibold border-b border-gray-200 dark:border-white/10 text-black dark:text-white">
           <span>Subject</span>
           <span>Date</span>
           <span>Duration</span>
@@ -262,7 +254,7 @@ export default function SessionsPage() {
         </div>
 
         {sessions.length === 0 && (
-          <p className="px-6 py-6 text-sm text-gray-400">
+          <p className="px-6 py-6 text-sm text-gray-600 dark:text-gray-400">
             No sessions logged yet.
           </p>
         )}
@@ -270,33 +262,28 @@ export default function SessionsPage() {
         {sessions.map((session) => (
           <div
             key={session.id}
-            className="grid grid-cols-6 gap-4 px-6 py-4 border-t border-white/5 hover:bg-white/5 transition"
+            className="grid grid-cols-6 gap-4 px-6 py-4 border-t border-gray-200 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/5 transition"
           >
-            <span className="font-medium">{session.subject.name}</span>
-
-            <span className="text-gray-400">
+            <span className="font-semibold text-black dark:text-white">{session.subject.name}</span>
+            <span className="text-gray-700 dark:text-gray-300">
               {new Date(session.createdAt).toLocaleDateString()}
             </span>
-
-            <span>{session.duration} min</span>
-
-            <span>Level {session.difficulty}</span>
-
-            <span className="truncate text-gray-400">
+            <span className="text-gray-700 dark:text-gray-300">{session.duration} min</span>
+            <span className="text-gray-700 dark:text-gray-300">Level {session.difficulty}</span>
+            <span className="truncate text-gray-600 dark:text-gray-400">
               {session.notes || "—"}
             </span>
-
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => handleEdit(session)}
-                className="p-2 rounded-lg hover:bg-white/10 transition"
+                className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-white/10 transition text-gray-700 dark:text-gray-300"
                 title="Edit session"
               >
                 <Edit2 size={16} />
               </button>
               <button
                 onClick={() => handleDelete(session.id)}
-                className="p-2 rounded-lg hover:bg-red-500/20 text-red-400 transition"
+                className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 transition"
                 title="Delete session"
               >
                 <Trash2 size={16} />
