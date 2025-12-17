@@ -13,7 +13,6 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Initialize theme with lazy initialization function
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
       const savedTheme = localStorage.getItem("theme") as Theme | null;
@@ -24,7 +23,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("dark");
 
-  // Update the theme whenever it changes
   useEffect(() => {
     const root = document.documentElement;
     
@@ -41,15 +39,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
       setResolvedTheme(actualTheme);
 
-      // Remove both classes first
       root.classList.remove("light", "dark");
-      // Add the appropriate class
       root.classList.add(actualTheme);
     };
 
     updateTheme();
 
-    // Listen for system theme changes
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = () => {
       if (theme === "system") {

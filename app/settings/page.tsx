@@ -34,7 +34,6 @@ export default function SettingsPage() {
         return;
       }
 
-      // Convert sessions to CSV
       const headers = ["Subject", "Duration (min)", "Difficulty", "Notes", "Date"];
       type Session = {
         subject: { name: string };
@@ -59,7 +58,6 @@ export default function SettingsPage() {
         ),
       ].join("\n");
 
-      // Create and download file
       const blob = new Blob([csvContent], { type: "text/csv" });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -77,7 +75,6 @@ export default function SettingsPage() {
 
   return (
     <section className="space-y-8 min-h-[calc(100vh-200px)]">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-semibold text-black dark:text-white">Settings</h1>
         <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -85,7 +82,6 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      {/* Appearance Section */}
       <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5">
         <div className="border-b border-gray-200 dark:border-white/10 px-6 py-4">
           <h2 className="text-lg font-medium text-black dark:text-white">Appearance</h2>
@@ -154,7 +150,6 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Data & Privacy Section */}
       <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5">
         <div className="border-b border-gray-200 dark:border-white/10 px-6 py-4">
           <h2 className="text-lg font-medium text-black dark:text-white">Data & Privacy</h2>
@@ -204,7 +199,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* About Section */}
+      {}
       <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 p-6">
         <h2 className="text-lg font-medium mb-2 text-black dark:text-white">About</h2>
         <div className="space-y-1 text-sm text-gray-700 dark:text-gray-400">
