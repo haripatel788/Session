@@ -4,6 +4,8 @@ import { ClerkProvider, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import "./globals.css";
 import Link from "next/link";
 import { ThemeProvider } from "@/app/components/ThemeContext";
+import Image from "next/image";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +20,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Session",
   description: "Focus. Measure. Improve.",
+  icons: {
+    icon: [
+      { url: "/fav_16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/fav_32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
 };
+
 
 export default function RootLayout({
   children,
@@ -37,7 +47,16 @@ export default function RootLayout({
               <header className="sticky top-0 z-50 border-b border-gray-200 dark:border-white/10 bg-white/80 dark:bg-black/80 backdrop-blur-xl">
                 <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
                   <Link href="/" className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5" />
+                  <div className="h-9 w-9 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+  <Image
+    src="/logo_512x512.png"
+    alt="Session logo"
+    width={22}
+    height={22}
+    priority
+  />
+</div>
+
                     <div>
                       <p className="text-sm font-semibold leading-none text-black dark:text-white">Session</p>
                       <p className="mt-1 text-xs leading-none text-gray-600 dark:text-gray-400">
