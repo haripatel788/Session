@@ -2,7 +2,6 @@ import { prisma } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
-// Helper function to ensure user exists in database
 async function ensureUserExists(userId: string) {
   try {
     const existingUser = await prisma.user.findUnique({
@@ -45,7 +44,6 @@ export async function GET() {
       );
     }
 
-    // Ensure user exists in database
     await ensureUserExists(userId);
 
     const sessions = await prisma.studySession.findMany({

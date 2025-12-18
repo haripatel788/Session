@@ -13,10 +13,8 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Await params before destructuring
     const { id } = await params;
 
-    // Verify the session belongs to the user
     const session = await prisma.studySession.findUnique({
       where: { id },
     });
@@ -35,7 +33,6 @@ export async function DELETE(
       );
     }
 
-    // Delete the session
     await prisma.studySession.delete({
       where: { id },
     });
@@ -61,12 +58,10 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Await params before destructuring
     const { id } = await params;
     const body = await request.json();
     const { subjectName, duration, difficulty, notes } = body;
 
-    // Verify the session belongs to the user
     const session = await prisma.studySession.findUnique({
       where: { id },
       include: { subject: true },
@@ -86,7 +81,6 @@ export async function PATCH(
       );
     }
 
-    // Handle subject change if needed
     let subjectId = session.subjectId;
 
     if (subjectName && subjectName !== session.subject.name) {
@@ -109,7 +103,6 @@ export async function PATCH(
       subjectId = subject.id;
     }
 
-    // Update the session
     const updatedSession = await prisma.studySession.update({
       where: { id },
       data: {

@@ -79,7 +79,6 @@ export default function DashboardPage() {
 
   return (
     <section className="space-y-10 min-h-[calc(100vh-200px)]">
-      {/* Header */}
       <div>
         <h1 className="text-4xl font-semibold text-black dark:text-white tracking-tight">Dashboard</h1>
         <p className="mt-2 text-base text-gray-600 dark:text-gray-400">
@@ -87,7 +86,6 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
         <StatCard
           label="Total Study Time"
@@ -106,7 +104,6 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* This week */}
       <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 p-6">
         <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">This Week</p>
         <p className="mt-2 text-2xl font-semibold text-black dark:text-white">
@@ -115,7 +112,6 @@ export default function DashboardPage() {
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-500">Keep the streak going.</p>
       </div>
 
-      {/* Recent sessions */}
       <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5">
         <div className="border-b border-gray-200 dark:border-white/10 px-6 py-4">
           <h2 className="text-lg font-semibold text-black dark:text-white">Recent Sessions</h2>

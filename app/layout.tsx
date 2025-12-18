@@ -43,7 +43,6 @@ export default function RootLayout({
         >
           <ThemeProvider>
             <div className="flex flex-col min-h-screen">
-              {/* Header */}
               <header className="sticky top-0 z-50 border-b border-gray-200 dark:border-white/10 bg-white/80 dark:bg-black/80 backdrop-blur-xl">
                 <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
                   <Link href="/" className="flex items-center gap-3">
@@ -110,13 +109,9 @@ export default function RootLayout({
                   </div>
                 </div>
               </header>
-
-              {/* Page Content - flex-1 makes it take remaining space */}
               <main className="flex-1 mx-auto w-full max-w-6xl px-6 py-10">
                 {children}
               </main>
-
-              {/* Footer - will be pushed to bottom */}
               <footer className="border-t border-gray-200 dark:border-white/10 py-6 text-center text-xs text-gray-600 dark:text-gray-400">
                 © {new Date().getFullYear()} Session – Focus. Measure. Improve.
                 <p className="mt-1">

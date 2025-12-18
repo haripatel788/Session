@@ -81,15 +81,12 @@ export default function SubjectsPage() {
 
   return (
     <section className="space-y-8 min-h-[calc(100vh-200px)]">
-      {/* Header */}
       <div>
         <h1 className="text-4xl font-semibold text-black dark:text-white tracking-tight">Subjects</h1>
         <p className="mt-2 text-base text-gray-600 dark:text-gray-400">
           Overview of your study subjects.
         </p>
       </div>
-
-      {/* Subject Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {subjects.length === 0 && (
           <p className="text-sm text-gray-600 dark:text-gray-400">No subjects yet.</p>

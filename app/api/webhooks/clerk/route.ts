@@ -11,7 +11,6 @@ export async function POST(req: Request) {
     throw new Error("Please add CLERK_WEBHOOK_SECRET to .env");
   }
 
-  // Get headers
   const headerPayload = await headers();
   const svix_id = headerPayload.get("svix-id");
   const svix_timestamp = headerPayload.get("svix-timestamp");
@@ -21,16 +20,13 @@ export async function POST(req: Request) {
     return new Response("Error: Missing svix headers", { status: 400 });
   }
 
-  // Get body
   const payload = await req.json();
   const body = JSON.stringify(payload);
 
-  // Create new Svix instance with secret
   const wh = new Webhook(WEBHOOK_SECRET);
 
   let evt: WebhookEvent;
 
-  // Verify webhook
   try {
     evt = wh.verify(body, {
       "svix-id": svix_id,
@@ -42,7 +38,6 @@ export async function POST(req: Request) {
     return new Response("Error: Verification failed", { status: 400 });
   }
 
-  // Handle the webhook
   const eventType = evt.type;
 
   if (eventType === "user.created") {
@@ -64,7 +59,6 @@ export async function POST(req: Request) {
       console.log(`✅ User created in database: ${email}`);
     } catch (error) {
       console.error("Error creating user:", error);
-      // If user already exists, that's okay
       if (error instanceof Error && error.message.includes("Unique constraint")) {
         console.log("User already exists, skipping");
       } else {
@@ -77,7 +71,6 @@ export async function POST(req: Request) {
     const { id } = evt.data;
 
     try {
-      // Delete all user data
       await prisma.studySession.deleteMany({
         where: { userId: id || "" },
       });

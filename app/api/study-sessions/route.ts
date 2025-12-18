@@ -2,7 +2,6 @@ import { prisma } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
-// Helper function to ensure user exists in database
 async function ensureUserExists(userId: string) {
   try {
     // Check if user exists
@@ -105,8 +104,6 @@ export async function GET() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    // Ensure user exists in database
     await ensureUserExists(userId);
 
     const sessions = await prisma.studySession.findMany({

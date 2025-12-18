@@ -57,28 +57,25 @@ a {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Prevent transition on page load */
 html.no-transition * {
   transition: none !important;
 }
 
-/* Better text rendering for SF Pro */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   letter-spacing: -0.02em;
 }
 
-/* Input and select styling */
 input, select, textarea {
   color: var(--foreground);
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: rgb(156, 163, 175); /* gray-400 */
+  color: rgb(156, 163, 175);
 }
 
 .dark input::placeholder,
 .dark textarea::placeholder {
-  color: rgb(156, 163, 175); /* gray-400 */
+  color: rgb(156, 163, 175);
 }
