@@ -11,8 +11,6 @@ type AuthPageProps = {
 export default function AuthPage({ mode }: AuthPageProps) {
   const { userId, isLoaded } = useAuth();
   const router = useRouter();
-
-  // If user is already signed in, redirect to dashboard
   useEffect(() => {
     if (isLoaded && userId) {
       router.push("/dashboard");
@@ -50,7 +48,6 @@ export default function AuthPage({ mode }: AuthPageProps) {
         appearance={commonAppearance}
         routing="path"
         path="/signup"
-        // This is the key setting - redirects to sign in if account exists
         unsafeMetadata={{
           allowDangerousMetadata: true
         }}
