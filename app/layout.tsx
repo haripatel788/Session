@@ -45,24 +45,48 @@ export default function RootLayout({
             <div className="flex flex-col min-h-screen">
               <header className="sticky top-0 z-50 border-b border-gray-200 dark:border-white/10 bg-white/80 dark:bg-black/80 backdrop-blur-xl">
                 <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-                  <Link href="/" className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 flex items-center justify-center">
-  <Image
-    src="/logo_512x512.png"
-    alt="Session logo"
-    width={22}
-    height={22}
-    priority
-  />
-</div>
+                  {/* Logo - Different link based on auth status */}
+                  <SignedIn>
+                    <Link href="/dashboard" className="flex items-center gap-3">
+                      <div className="h-9 w-9 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+                        <Image
+                          src="/logo_512x512.png"
+                          alt="Session logo"
+                          width={22}
+                          height={22}
+                          priority
+                        />
+                      </div>
 
-                    <div>
-                      <p className="text-sm font-semibold leading-none text-black dark:text-white">Session</p>
-                      <p className="mt-1 text-xs leading-none text-gray-600 dark:text-gray-400">
-                        Focus. Measure. Improve.
-                      </p>
-                    </div>
-                  </Link>
+                      <div>
+                        <p className="text-sm font-semibold leading-none text-black dark:text-white">Session</p>
+                        <p className="mt-1 text-xs leading-none text-gray-600 dark:text-gray-400">
+                          Focus. Measure. Improve.
+                        </p>
+                      </div>
+                    </Link>
+                  </SignedIn>
+
+                  <SignedOut>
+                    <Link href="/" className="flex items-center gap-3">
+                      <div className="h-9 w-9 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+                        <Image
+                          src="/logo_512x512.png"
+                          alt="Session logo"
+                          width={22}
+                          height={22}
+                          priority
+                        />
+                      </div>
+
+                      <div>
+                        <p className="text-sm font-semibold leading-none text-black dark:text-white">Session</p>
+                        <p className="mt-1 text-xs leading-none text-gray-600 dark:text-gray-400">
+                          Focus. Measure. Improve.
+                        </p>
+                      </div>
+                    </Link>
+                  </SignedOut>
 
                   <SignedIn>
                     <nav className="hidden gap-6 text-sm text-gray-700 dark:text-gray-300 sm:flex">
@@ -113,7 +137,7 @@ export default function RootLayout({
                 {children}
               </main>
               <footer className="border-t border-gray-200 dark:border-white/10 py-6 text-center text-xs text-gray-600 dark:text-gray-400">
-                © {new Date().getFullYear()} Session – Focus. Measure. Improve.
+                © {new Date().getFullYear()} Session — Focus. Measure. Improve.
                 <p className="mt-1">
                   Created by{" "}
                   

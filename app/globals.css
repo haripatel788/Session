@@ -31,27 +31,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-html,
-body,
-div,
-header,
-main,
-footer,
-section,
-nav,
-button,
-input,
-select,
-textarea,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-span,
-a {
+html,body,div,header,main,footer,section,nav,button,input,select,textarea,h1,h2,h3,h4, h5, h6, p, span, a {
   transition-property: background-color, border-color, color, fill, stroke;
   transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -68,14 +48,47 @@ h1, h2, h3, h4, h5, h6 {
 
 input, select, textarea {
   color: var(--foreground);
+  background-color: var(--background);
 }
 
-input::placeholder,
-textarea::placeholder {
+input::placeholder, textarea::placeholder {
+  color: rgb(107, 114, 128);
+}
+
+.dark input::placeholder, .dark textarea::placeholder {
   color: rgb(156, 163, 175);
 }
 
-.dark input::placeholder,
-.dark textarea::placeholder {
-  color: rgb(156, 163, 175);
+/* Force proper text colors in light mode */
+html:not(.dark) {
+  color: #000000;
+}
+
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4,
+html:not(.dark) h5,
+html:not(.dark) h6,
+html:not(.dark) p,
+html:not(.dark) span,
+html:not(.dark) div,
+html:not(.dark) button {
+  color: inherit;
+}
+
+/* Ensure select dropdowns work in light mode */
+html:not(.dark) select {
+  background-color: white;
+  color: black;
+}
+
+html:not(.dark) select option {
+  background-color: white;
+  color: black;
+}
+
+.dark select option {
+  background-color: black;
+  color: white;
 }
